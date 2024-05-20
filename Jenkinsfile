@@ -6,7 +6,7 @@ pipeline{
         AWS_ACCOUNT_ID="385240549448"
         REPO_NAME="demo_repo"
         IMG_TAG="node_todo_app"
-        REPO_URI="${AWS_DEFAULT_REGION}.dkr.ecr.${AWS_ACCOUNT_ID}.amazonaws.com/${REPO_NAME}"
+        REPO_URI="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${REPO_NAME}"
     }
     stages{
         stage('aws ecr loggin'){
@@ -38,7 +38,7 @@ pipeline{
                 //     sh "docker push rajmaurya/node_todo_app:latest"
                 // }
                 sh 'docker tag ${REPO_NAME}:${IMG_TAG} ${REPO_URI}:${IMG_TAG}'
-                sh 'docker push 385240549448.dkr.ecr.us-east-1.amazonaws.com/${REPO_NAME}:${IMG_TAG}'
+                sh 'docker push 385240549448.dkr.ecr.us-east-1.amazonaws.com:${IMG_TAG}'
                 
             }
         }
