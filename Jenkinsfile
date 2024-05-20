@@ -1,7 +1,21 @@
 pipeline{
     agent any
     //agent { label 'dev_agent' }
+    environment{
+        AWS_DEFAULT_REGION="us-east-1"
+        AWS_ACCOUNT_ID="385240549448"
+        REPO_NAME="demo_repo"
+        IMG_TAG="node_todo_app"
+        REPO_URI="${AWS_DEFAULT_REGION}.dkr.ecr.${AWS_ACCOUNT_ID}.amazonaws.com/${REPO_NAME}"
+    }
     stages{
+        stage(aws ecr loggin){
+            steps{
+                script{
+                    sh "aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
+                }
+            }
+        }
         stage('Code'){
             steps{
              git url: "https://github.com/rajMaurya0502/node-todo-cicd.git", branch: 'master'   
@@ -9,17 +23,23 @@ pipeline{
         }
         stage('build and test'){
             steps{
-                sh 'docker build -t node_todo_app .'
-                sh 'docker tag node_todo_app:latest rajmaurya/node_todo_app:latest'
+                script{
+                    dockerImage = docker.build("${REPO_NAME}:${IMG_TAG}")
+                }
+                //sh 'docker tag demo_repo:latest 385240549448.dkr.ecr.us-east-1.amazonaws.com/demo_repo:latest'
+                //sh 'docker tag node_todo_app:latest rajmaurya/${IMG_TAG}:latest'
             }
         }
-        stage('Login and push'){
+        stage('push'){
             steps{
-                echo 'login to dockerhub repo for pushing the image'
-                withCredentials([usernamePassword(credentialsId:'dockerHub', passwordVariable:'dockerHubPassword', usernameVariable:'dockerHubUsername')]){
-                    sh "docker login -u ${env.dockerHubUsername} -p ${env.dockerHubPassword}"
-                    sh "docker push rajmaurya/node_todo_app:latest"
-                }
+                // echo 'login to dockerhub repo for pushing the image'
+                // withCredentials([usernamePassword(credentialsId:'dockerHub', passwordVariable:'dockerHubPassword', usernameVariable:'dockerHubUsername')]){
+                //     sh "docker login -u ${env.dockerHubUsername} -p ${env.dockerHubPassword}"
+                //     sh "docker push rajmaurya/node_todo_app:latest"
+                // }
+                sh 'docker tag ${REPO_NAME}:${IMG_TAG} ${REPO_URI}:${IMG_TAG}'
+                sh 'docker push 385240549448.dkr.ecr.us-east-1.amazonaws.com/${REPO_NAME}:${IMG_TAG}'
+                
             }
         }
         stage('deploy'){
