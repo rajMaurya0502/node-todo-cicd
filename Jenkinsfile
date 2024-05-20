@@ -9,7 +9,7 @@ pipeline{
         REPO_URI="${AWS_DEFAULT_REGION}.dkr.ecr.${AWS_ACCOUNT_ID}.amazonaws.com/${REPO_NAME}"
     }
     stages{
-        stage(aws ecr loggin){
+        stage('aws ecr loggin'){
             steps{
                 script{
                     sh "aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
