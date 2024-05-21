@@ -44,7 +44,7 @@ pipeline{
         }
         stage('deploy'){
             steps{
-                sh 'docker run -d -p 8000:8000 rajmaurya/node_todo_app:latest'
+                sh 'docker run -d -p 8000:8000 ${REPO_URI}/node_todo_app:latest'
             }
         }
     }
