@@ -24,7 +24,7 @@ pipeline{
         stage('build and test'){
             steps{
                 script{
-                    dockerImage = docker.build("${REPO_NAME}:${IMG_TAG}")
+                    dockerImage = docker.build("${IMG_TAG}")
                 }
                 //sh 'docker tag demo_repo:latest 385240549448.dkr.ecr.us-east-1.amazonaws.com/demo_repo:latest'
                 //sh 'docker tag node_todo_app:latest rajmaurya/${IMG_TAG}:latest'
@@ -37,8 +37,8 @@ pipeline{
                 //     sh "docker login -u ${env.dockerHubUsername} -p ${env.dockerHubPassword}"
                 //     sh "docker push rajmaurya/node_todo_app:latest"
                 // }
-                sh 'docker tag ${REPO_NAME}:${IMG_TAG} ${REPO_URI}:${IMG_TAG}'
-                sh 'docker push 385240549448.dkr.ecr.us-east-1.amazonaws.com:${IMG_TAG}'
+                sh 'docker tag ${IMG_TAG}:latest ${REPO_URI}:${IMG_TAG}'
+                sh 'docker push ${REPO_URI}:${IMG_TAG}'
                 
             }
         }
