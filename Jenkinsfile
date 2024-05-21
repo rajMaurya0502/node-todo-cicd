@@ -44,7 +44,8 @@ pipeline{
         }
         stage('deploy'){
             steps{
-                sh 'docker run -d -p 8000:8000 ${REPO_URI}/node_todo_app:latest'
+                sh 'docker pull ${IMG_TAG}'
+                sh 'docker run -d -p 8000:8000 ${IMG_TAG}:latest'
             }
         }
     }
