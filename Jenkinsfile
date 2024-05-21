@@ -45,7 +45,7 @@ pipeline{
         stage('deploy'){
             steps{
                 sh 'docker pull ${IMG_TAG}'
-                sh 'docker run -d -p 8000:8000 ${IMG_TAG}:latest'
+                sh 'docker run -d -p 8000:8000 385240549448.dkr.ecr.us-east-1.amazonaws.com/demo_repo:node_todo_app'
             }
         }
     }
