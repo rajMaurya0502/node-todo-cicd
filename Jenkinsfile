@@ -7,6 +7,7 @@ pipeline{
         REPO_NAME="demo_repo"
         IMG_TAG="node_todo_app"
         REPO_URI="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${REPO_NAME}"
+        LAMBDA_FUNCTION_NAME="sample_lambda_function-dev"
     }
     stages{
         stage('aws ecr loggin'){
@@ -46,6 +47,13 @@ pipeline{
             steps{
                 //sh 'docker pull ${IMG_TAG}'
                 sh 'docker run -d -p 8000:8000 385240549448.dkr.ecr.us-east-1.amazonaws.com/demo_repo:node_todo_app'
+            }
+        }
+        stage('deployment'){
+            steps{
+                script{
+                    sh "aws lambda update-function-code --function-name ${LAMBDA_FUNCTION_NAME} --image-uri 385240549448.dkr.ecr.us-east-1.amazonaws.com/demo_repo:node_todo_app --region ${AWS_DEFAULT_REGION}"
+                }
             }
         }
     }
