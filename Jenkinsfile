@@ -1,22 +1,22 @@
 pipeline{
     agent any
     //agent { label 'dev_agent' }
-    environment{
-        AWS_DEFAULT_REGION="us-east-1"
-        AWS_ACCOUNT_ID="385240549448"
-        REPO_NAME="demo_repo"
-        IMG_TAG="node_todo_app"
-        REPO_URI="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${REPO_NAME}"
-        LAMBDA_FUNCTION_NAME="sample_lambda_function-dev"
-    }
+    // environment{
+    //     AWS_DEFAULT_REGION="ap-south-1"
+    //     AWS_ACCOUNT_ID="590183764012"
+    //     REPO_NAME="demo_repo"
+    //     IMG_TAG="node_todo_app"
+    //     REPO_URI="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${REPO_NAME}"
+    //     LAMBDA_FUNCTION_NAME="sample_lambda_function-dev"
+    // }
     stages{
-        stage('aws ecr loggin'){
-            steps{
-                script{
-                    sh "aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
-                }
-            }
-        }
+        // stage('aws ecr loggin'){
+        //     steps{
+        //         script{
+        //             sh "aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
+        //         }
+        //     }
+        // }
         stage('Code'){
             steps{
              git url: "https://github.com/rajMaurya0502/node-todo-cicd.git", branch: 'master'   
