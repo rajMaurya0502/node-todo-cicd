@@ -19,7 +19,7 @@ pipeline{
         // }
         stage('Code'){
             steps{
-             git url: "https://github.com/rajMaurya0502/node-todo-cicd.git", branch: 'master'   
+             git url: "https://github.com/rajMaurya0502/node-todo-cicd.git", branch: 'dev'   
             }
         }
         stage('Static code analysis'){
