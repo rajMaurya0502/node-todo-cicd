@@ -3,21 +3,22 @@ pipeline{
     //agent { label 'dev_agent' }
     environment{
         SONARQUBE_SCANNER_HOME = tool name: 'SonarQube Scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
-    //     AWS_DEFAULT_REGION="ap-south-1"
-    //     AWS_ACCOUNT_ID="590183764012"
+        AWS_DEFAULT_REGION="ap-south-1"
+        AWS_ACCOUNT_ID="590183764012"
         REPO_NAME="demo_repo"
         IMG_TAG="node_todo_app"
         REPO_URI="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${REPO_NAME}"
-    //     LAMBDA_FUNCTION_NAME="sample_lambda_function-dev"
+        LAMBDA_FUNCTION_NAME="sample_lambda_function-dev"
+        IAM_ROLE_ARN="arn:aws:iam::590183764012:role/EC2_lambda_ecr_role"
      }
     stages{
-        // stage('aws ecr loggin'){
-        //     steps{
-        //         script{
-        //             sh "aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
-        //         }
-        //     }
-        // }
+        stage('aws ecr loggin'){
+            steps{
+                script{
+                    sh "aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
+                }
+            }
+        }
         stage('Code'){
             steps{
              git url: "https://github.com/rajMaurya0502/node-todo-cicd.git", branch: 'dev'   
@@ -33,19 +34,19 @@ pipeline{
                }
             }
        }
-        stage('build and test'){
+        stage('build'){
             steps{
                 script{
                     // docker.build("${IMG_TAG}")
                     
                     sh "docker build -t $IMG_TAG -f Dockerfile ."
-                    sh "docker tag $IMAGE_TAG:latest $REPO_URI:$IMG_TAG"
+                    // sh "docker tag $IMG_TAG:latest $REPO_URI:$IMG_TAG"
                 }
                 //sh 'docker tag demo_repo:latest 385240549448.dkr.ecr.us-east-1.amazonaws.com/demo_repo:latest'
                 //sh 'docker tag node_todo_app:latest rajmaurya/${IMG_TAG}:latest'
             }
         }
-        stage('push'){
+        stage('tag and push'){
             steps{
                 // echo 'login to dockerhub repo for pushing the image'
                 // withCredentials([usernamePassword(credentialsId:'dockerHub', passwordVariable:'dockerHubPassword', usernameVariable:'dockerHubUsername')]){
@@ -57,18 +58,36 @@ pipeline{
                 
             }
         }
-        stage('deploy'){
-            steps{
-                //sh 'docker pull ${IMG_TAG}'
-                sh 'docker run -d -p 8000:8000 385240549448.dkr.ecr.us-east-1.amazonaws.com/demo_repo:node_todo_app'
-            }
-        }
-        stage('deployment'){
-            steps{
-                script{
-                    sh "aws lambda update-function-code --function-name ${LAMBDA_FUNCTION_NAME} --image-uri 385240549448.dkr.ecr.us-east-1.amazonaws.com/demo_repo:node_todo_app --region ${AWS_DEFAULT_REGION}"
+       stage('Deploy to AWS Lambda') {
+            steps {
+                script {
+                    def lambdaFunctionExists = sh(script: """
+                        aws lambda get-function --function-name ${LAMBDA_FUNCTION_NAME} --region ${AWS_REGION} > /dev/null 2>&1
+                    """, returnStatus: true) == 0
+
+                    if (lambdaFunctionExists) {
+                        echo "Updating existing Lambda function..."
+                        sh """
+                        aws lambda update-function-code \
+                            --function-name ${LAMBDA_FUNCTION_NAME} \
+                            --image-uri ${REPO_URI}:${IMG_TAG} \
+                            --region ${AWS_REGION}
+                        """
+                    } else {
+                        echo "Creating new Lambda function..."
+                        sh """
+                        aws lambda create-function \
+                            --function-name ${LAMBDA_FUNCTION_NAME} \
+                            --package-type Image \
+                            --code ImageUri=${REPO_URI}:${IMG_TAG} \
+                            --role ${IAM_ROLE_ARN} \
+                            --region ${AWS_REGION}
+                        """
+                    }
                 }
             }
         }
+    
+
     }
 }
