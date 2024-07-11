@@ -36,9 +36,9 @@ pipeline{
         stage('build and test'){
             steps{
                 script{
-                    docker.build("${IMG_TAG}")
+                    // docker.build("${IMG_TAG}")
                     
-                    // sh "docker build -t $IMAGE_TAG -f Dockerfile ."
+                    sh "docker build -t $IMG_TAG -f Dockerfile ."
                     sh "docker tag $IMAGE_TAG:latest $REPO_URI:$IMG_TAG"
                 }
                 //sh 'docker tag demo_repo:latest 385240549448.dkr.ecr.us-east-1.amazonaws.com/demo_repo:latest'
