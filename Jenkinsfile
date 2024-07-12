@@ -77,12 +77,6 @@ pipeline{
                     } else {
                         echo "Creating new Lambda function..."
                         sh """
-                        // aws lambda create-function \
-                        //     --function-name ${LAMBDA_FUNCTION_NAME} \
-                        //     --package-type Image \
-                        //     --code ImageUri=${REPO_URI}:${IMG_TAG} \
-                        //     --role ${IAM_ROLE_ARN} \
-                        //     --region ${AWS_DEFAULT_REGION}
                          aws cloudformation deploy \
                             --template-file ${CFN_TEMPLATE_PATH} \
                             --stack-name lambda-demo-stack \
