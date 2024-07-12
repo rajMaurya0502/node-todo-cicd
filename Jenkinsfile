@@ -62,7 +62,7 @@ pipeline{
             steps {
                 script {
                     def lambdaFunctionExists = sh(script: """
-                        aws lambda get-function --function-name ${LAMBDA_FUNCTION_NAME} --region ${AWS_REGION} > /dev/null 2>&1
+                        aws lambda get-function --function-name ${LAMBDA_FUNCTION_NAME} --region ${AWS_DEFAULT_REGION} > /dev/null 2>&1
                     """, returnStatus: true) == 0
 
                     if (lambdaFunctionExists) {
@@ -71,7 +71,7 @@ pipeline{
                         aws lambda update-function-code \
                             --function-name ${LAMBDA_FUNCTION_NAME} \
                             --image-uri ${REPO_URI}:${IMG_TAG} \
-                            --region ${AWS_REGION}
+                            --region ${AWS_DEFAULT_REGION}
                         """
                     } else {
                         echo "Creating new Lambda function..."
@@ -81,7 +81,7 @@ pipeline{
                             --package-type Image \
                             --code ImageUri=${REPO_URI}:${IMG_TAG} \
                             --role ${IAM_ROLE_ARN} \
-                            --region ${AWS_REGION}
+                            --region ${AWS_DEFAULT_REGION}
                         """
                     }
                 }
