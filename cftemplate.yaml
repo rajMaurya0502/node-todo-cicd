@@ -27,4 +27,4 @@ Resources:
         #- arn:aws:lambda:ap-south-1:339713002425:layer:axios:2
         #- arn:aws:lambda:ap-south-1:339713002425:layer:qs:2
       PackageType: Image
-      Role: 'arn:aws:iam::590183764012:role/EC2_lambda_ecr_role'
+      Role: 'arn:aws:iam::590183764012:role/lambda_basic_execution_role'
