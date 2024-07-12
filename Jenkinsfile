@@ -10,6 +10,7 @@ pipeline{
         REPO_URI="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${REPO_NAME}"
         LAMBDA_FUNCTION_NAME="sample_lambda_function-dev"
         IAM_ROLE_ARN="arn:aws:iam::590183764012:role/EC2_lambda_ecr_role"
+        CFN_TEMPLATE_PATH="cftemplate.yaml"
      }
     stages{
         stage('aws ecr loggin'){
@@ -76,12 +77,21 @@ pipeline{
                     } else {
                         echo "Creating new Lambda function..."
                         sh """
-                        aws lambda create-function \
-                            --function-name ${LAMBDA_FUNCTION_NAME} \
-                            --package-type Image \
-                            --code ImageUri=${REPO_URI}:${IMG_TAG} \
-                            --role ${IAM_ROLE_ARN} \
-                            --region ${AWS_DEFAULT_REGION}
+                        // aws lambda create-function \
+                        //     --function-name ${LAMBDA_FUNCTION_NAME} \
+                        //     --package-type Image \
+                        //     --code ImageUri=${REPO_URI}:${IMG_TAG} \
+                        //     --role ${IAM_ROLE_ARN} \
+                        //     --region ${AWS_DEFAULT_REGION}
+                         aws cloudformation deploy \
+                            --template-file ${CFN_TEMPLATE_PATH} \
+                            --stack-name lambda-demo-stack \
+                            --capabilities CAPABILITY_NAMED_IAM \
+                            --region ${AWS_DEFAULT_REGION} \
+                            --parameter-overrides \
+                                LambdaFunctionName=${LAMBDA_FUNCTION_NAME} \
+                                LambdaRoleArn=${IAM_ROLE_ARN} \
+                                ImageUri=${REPO_URI}:${IMG_TAG}   
                         """
                     }
                 }
