@@ -35,25 +35,24 @@ pipeline{
                }
             }
        }
+        stage("Quality Gate") {
+            steps {
+                // Wait for SonarQube to compute the results and check the quality gate
+                timeout(time: 1, unit: 'HOURS') {
+                 //This function waits for the quality gate results from SonarQube.If the quality gate fails (i.e., the code does not meet the predefined quality criteria), the pipeline will be aborted.    
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
         stage('build'){
             steps{
                 script{
-                    // docker.build("${IMG_TAG}")
-                    
                     sh "docker build -t $IMG_TAG -f Dockerfile ."
-                    // sh "docker tag $IMG_TAG:latest $REPO_URI:$IMG_TAG"
                 }
-                //sh 'docker tag demo_repo:latest 385240549448.dkr.ecr.us-east-1.amazonaws.com/demo_repo:latest'
-                //sh 'docker tag node_todo_app:latest rajmaurya/${IMG_TAG}:latest'
             }
         }
         stage('tag and push'){
             steps{
-                // echo 'login to dockerhub repo for pushing the image'
-                // withCredentials([usernamePassword(credentialsId:'dockerHub', passwordVariable:'dockerHubPassword', usernameVariable:'dockerHubUsername')]){
-                //     sh "docker login -u ${env.dockerHubUsername} -p ${env.dockerHubPassword}"
-                //     sh "docker push rajmaurya/node_todo_app:latest"
-                // }
                 sh 'docker tag ${IMG_TAG}:latest ${REPO_URI}:${IMG_TAG}'
                 sh 'docker push ${REPO_URI}:${IMG_TAG}'
                 
