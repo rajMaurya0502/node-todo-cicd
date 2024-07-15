@@ -30,7 +30,7 @@ pipeline{
                    
                    withSonarQubeEnv('SonarQube'){
                        // sh "mvn -ntp sonar:sonar -Dsonar.projectKey=java_app -Dsonar.host.url=${SONARQUBE_URL} -Dsonar.login=sqa_0908e617ed2e9f32f7269acafe3e997e41456f16"
-                       sh "${SONARQUBE_SCANNER_HOME}/bin/sonar-scanner -Dsonar.projectKey=nodejs_todo_app -Dsonar.host.url=http://13.233.195.163:9000 -Dsonar.login=sqa_0908e617ed2e9f32f7269acafe3e997e41456f16"
+                       sh "${SONARQUBE_SCANNER_HOME}/bin/sonar-scanner -Dsonar.projectKey=nodejs_todo_app -Dsonar.host.url=http://13.235.42.185:9000 -Dsonar.login=sqa_0908e617ed2e9f32f7269acafe3e997e41456f16"
 
                }
             }
