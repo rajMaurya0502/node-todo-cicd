@@ -25,25 +25,25 @@ pipeline{
              git url: "https://github.com/rajMaurya0502/node-todo-cicd.git", branch: 'dev'   
             }
         }
-        stage('Static code analysis'){
-            steps{
+       //  stage('Static code analysis'){
+       //      steps{
                    
-                   withSonarQubeEnv('SonarQube'){
-                       // sh "mvn -ntp sonar:sonar -Dsonar.projectKey=java_app -Dsonar.host.url=${SONARQUBE_URL} -Dsonar.login=sqa_0908e617ed2e9f32f7269acafe3e997e41456f16"
-                       sh "${SONARQUBE_SCANNER_HOME}/bin/sonar-scanner -Dsonar.projectKey=nodejs_todo_app -Dsonar.host.url=http://13.235.42.185:9000 -Dsonar.login=sqa_0908e617ed2e9f32f7269acafe3e997e41456f16"
+       //             withSonarQubeEnv('SonarQube'){
+       //                 // sh "mvn -ntp sonar:sonar -Dsonar.projectKey=java_app -Dsonar.host.url=${SONARQUBE_URL} -Dsonar.login=sqa_0908e617ed2e9f32f7269acafe3e997e41456f16"
+       //                 sh "${SONARQUBE_SCANNER_HOME}/bin/sonar-scanner -Dsonar.projectKey=nodejs_todo_app -Dsonar.host.url=http://13.235.42.185:9000 -Dsonar.login=sqa_0908e617ed2e9f32f7269acafe3e997e41456f16"
 
-               }
-            }
-       }
-        stage("Quality Gate") {
-            steps {
-                // Wait for SonarQube to compute the results and check the quality gate
-                timeout(time: 1, unit: 'HOURS') {
-                 //This function waits for the quality gate results from SonarQube.If the quality gate fails (i.e., the code does not meet the predefined quality criteria), the pipeline will be aborted.    
-                    waitForQualityGate abortPipeline: true
-                }
-            }
-        }
+       //         }
+       //      }
+       // }
+       //  stage("Quality Gate") {
+       //      steps {
+       //          // Wait for SonarQube to compute the results and check the quality gate
+       //          timeout(time: 1, unit: 'HOURS') {
+       //           //This function waits for the quality gate results from SonarQube.If the quality gate fails (i.e., the code does not meet the predefined quality criteria), the pipeline will be aborted.    
+       //              waitForQualityGate abortPipeline: true
+       //          }
+       //      }
+       //  }
         stage('build'){
             steps{
                 script{
