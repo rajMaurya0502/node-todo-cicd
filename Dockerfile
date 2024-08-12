@@ -30,7 +30,9 @@ RUN echo pwd
 
 RUN curl $(aws --region ap-south-1 lambda get-layer-version-by-arn --arn arn:aws:lambda:ap-south-1:725887861453:layer:Dynatrace_OneAgent_1_295_3_20240729-145043_with_collector_nodejs:1 --query 'Content.Location' --output text) --output layer.zip
 
-RUN unzip -d DynatraceOneAgentExtension layer.zip
+#RUN unzip -d DynatraceOneAgentExtension layer.zip
+RUN unzip -d DynatraceOneAgentExtension layer.zip && \
+    ls -l DynatraceOneAgentExtension
 
 COPY DynatraceOneAgentExtension/ /opt/
 RUN chmod +x /opt/dynatrace
